@@ -1,0 +1,20 @@
+#include <linux/init.h>
+#include <linux/module.h>
+
+static int __init my_init(void){
+	printk("my init\n");
+	return 0;
+
+}
+
+void __exit my_exit(void){
+	printk("my_exit\n");
+}
+
+module_init(my_init);
+module_exit(my_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("WANG LIANG");
+MODULE_DESCRIPTION("TEST DRIVER");
+MODULE_ALIAS("mytest");

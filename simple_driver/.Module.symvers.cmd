@@ -1,0 +1,1 @@
+savedcmd_/home/liang/Desktop/test/driver/Module.symvers :=  scripts/mod/modpost -m -a      -o /home/liang/Desktop/test/driver/Module.symvers -T /home/liang/Desktop/test/driver/modules.order -i Module.symvers -e 
