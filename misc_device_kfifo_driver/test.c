@@ -23,24 +23,13 @@ int main()
 		printf("write nr fail.\n");
 		return -1;
 	}
-	close(fd);
-
-	fd = open(MISC_DEV, O_RDWR);
-	if( fd < 0 ){
-		printf("open file fail\n");
-		return -1;
-	}
 
 	ret = read(fd, buffer, MISC_DEV_BUF);
-	if(ret != MISC_DEV_BUF){
-		printf("read nr fail.\n");
-		return -1;
-	}
+	printf("read %d\n", ret);
 
-	for(int i = 0;i<MISC_DEV_BUF;i++){
-		printf("%c", buffer[i]);
-	}
-	printf("\n");
+
+	printf("%s\n", buffer);
+
 
 	close(fd);
 
