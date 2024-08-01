@@ -1,0 +1,1 @@
+savedcmd_/home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/my_driver.mod := printf '%s\n'   my_driver.o | awk '!x[$$0]++ { print("/home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/"$$0) }' > /home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/my_driver.mod

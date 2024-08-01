@@ -1,0 +1,1 @@
+savedcmd_/home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/Module.symvers :=  scripts/mod/modpost -m -a      -o /home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/Module.symvers -T /home/liang/Desktop/my_git/linux_driver/char_device_poll_driver/modules.order -i Module.symvers -e 
