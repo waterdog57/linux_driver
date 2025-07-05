@@ -72,7 +72,7 @@ static int __init my_init(void) {
 
 cdev_fail:
   for (; i >= 0; i--) {
-    if (i <= pass - 1) {
+    if (i <= (pass - 1)) {
       device_destroy(my_class, MKDEV(MAJOR(dev), MINOR(dev) + i));
     }
     if (demo_cdev[i]) {
