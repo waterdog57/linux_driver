@@ -59,14 +59,14 @@ static int __init my_init(void) {
 
     cdev_init(demo_cdev[i], &demodrv_fops);
 
-    ret = cdev_add(demo_cdev[i], dev, i);
+    ret = cdev_add(demo_cdev[i], MKDEV(MAJOR(dev), MINOR(dev) + i), 1);
     if (ret) {
       printk("cdev add fail");
       pass = i;
       goto cdev_fail;
     }
 
-    device_create(my_class, NULL, dev, NULL, "my_char_dev%d", i);
+    device_create(my_class, NULL, MKDEV(MAJOR(dev), MINOR(dev) + i), NULL, "my_char_dev%d", i);
   }
   return 0;
 
