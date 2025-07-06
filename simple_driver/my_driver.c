@@ -2,30 +2,26 @@
 #include <linux/module.h>
 
 static int test_item = 0;
-module_param( test_item, int, 0644 );
-MODULE_PARM_DESC(test_item,"which test item?");
+module_param(test_item, int, 0644);
+MODULE_PARM_DESC(test_item, "which test item?");
 
-int testfun_for_anthor_driver(void){
-	printk("%s\n","testfun_for_anthor_driver");
-	return 0;
+int testfun_for_anthor_driver(void);
+int testfun_for_anthor_driver(void) {
+  printk("%s\n", "testfun_for_anthor_driver");
+  return 0;
+}
+EXPORT_SYMBOL(testfun_for_anthor_driver);
+
+static int __init my_init(void) {
+  printk("my init\n");
+  printk("test item : %d\n", test_item);
+  return 0;
 }
 
-
-static int __init my_init(void){
-	printk("my init\n");
-	printk("test item : %d\n", test_item);
-	return 0;
-
-}
-
-void __exit my_exit(void){
-	printk("my_exit\n");
-}
+static void __exit my_exit(void) { printk("my_exit\n"); }
 
 module_init(my_init);
 module_exit(my_exit);
-
-EXPORT_SYMBOL(testfun_for_anthor_driver);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("waterdog");
