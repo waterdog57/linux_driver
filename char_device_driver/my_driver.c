@@ -2,8 +2,18 @@
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/init.h>
+#include <linux/kfifo.h>
 #include <linux/module.h>
+#include <linux/printk.h>
 #include <linux/uaccess.h>
+
+#define BUFFER_SIZE 128
+DEFINE_KFIFO(device_buff, char, BUFFER_SIZE);
+
+uint8_t my_buffer[BUFFER_SIZE];
+
+wait_queue_head_t read_queue;
+wait_queue_head_t write_queue;
 
 static dev_t dev;
 static struct cdev *demo_cdev[2];
@@ -26,8 +36,41 @@ static ssize_t demodrv_read(struct file *file, char __user *buf, size_t lbuf,
 }
 static ssize_t demodrv_write(struct file *file, const char __user *buf,
                              size_t count, loff_t *f_pos) {
+
+  int ret;
   printk("write\n");
-  return 0;
+  printk("write pid %d, going to sleep\n", current->pid);
+  if (count > BUFFER_SIZE) {
+    printk("write count %ld is larger than buffer size %d\n", count,
+           BUFFER_SIZE);
+    count = BUFFER_SIZE; // Limit to buffer size
+  }
+  ret = wait_event_interruptible(write_queue, 0);
+  if (ret) {
+    printk("wait_event_interruptible failed\n");
+    return ret; // Interrupted by a signal
+  }
+
+  if (copy_from_user(&my_buffer, buf, count)) {
+    printk("copy_from_user failed\n");
+    return -EFAULT; // Bad address
+  }
+
+  // if(!kfifo_is_full(&device_buff)){
+  //   if(file->f_flags & O_NONBLOCK) {
+  //     return -EAGAIN;
+  //   }
+  //   printk("write pid %d, going to sleep\n", current->pid);
+
+  // }
+
+  // if(copy_from_user(&device_buff, buf, count)){
+  //   printk("copy_from_user failed\n");
+  //   return -EFAULT; // Bad address
+  // }
+
+  pr_info("Received from user: %.*s\n", (int)count, (char *)my_buffer);
+  return count;
 }
 
 static const struct file_operations demodrv_fops = {.owner = THIS_MODULE,
@@ -66,8 +109,12 @@ static int __init my_init(void) {
       goto cdev_fail;
     }
 
-    device_create(my_class, NULL, MKDEV(MAJOR(dev), MINOR(dev) + i), NULL, "my_char_dev%d", i);
+    device_create(my_class, NULL, MKDEV(MAJOR(dev), MINOR(dev) + i), NULL,
+                  "my_char_dev%d", i);
   }
+  init_waitqueue_head(&read_queue);
+  init_waitqueue_head(&write_queue);
+
   return 0;
 
 cdev_fail:
